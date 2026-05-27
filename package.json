@@ -1,0 +1,44 @@
+{
+  "name": "deskatop-app",
+  "version": "1.0.0",
+  "description": "Electron desktop app with macOS-style login",
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "build:win": "npm run build && electron-builder --win"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "pg": "^8.21.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^33.4.0",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^3.1.0",
+    "playwright-core": "^1.60.0"
+  },
+  "build": {
+    "appId": "com.example.deskatopapp",
+    "productName": "DeskatopApp",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      "out/**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}
