@@ -89,6 +89,18 @@ CREATE TABLE users (
 );
 ```
 
+## 已知待改善項目
+
+> Code Review 發現的優先修復項目：
+
+| 優先 | 項目 | 說明 |
+|---|---|---|
+| 🔴 高 | 密碼明碼儲存 | `users.password` 目前為明碼，正式環境應改用 `bcryptjs` 雜湊 |
+| 🔴 高 | Pool 無錯誤監聽 | `pg.Pool` 缺少 `pool.on('error')` 處理，DB 離線會讓主程序崩潰 |
+| 🟠 中 | 錯誤訊息外洩 | DB 連線錯誤訊息直接回傳 renderer，應只回傳通用提示 |
+| 🟠 中 | Auth 狀態未伺服器驗證 | `authed` 僅存在 renderer 記憶體，可從 DevTools 繞過 |
+| 🟡 低 | `sandbox: false` | 停用了 Chromium 沙箱，正式環境建議啟用 |
+
 ## UI 驗證
 
 ```bash
