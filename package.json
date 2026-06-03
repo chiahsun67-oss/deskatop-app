@@ -40,6 +40,9 @@
     "files": [
       "out/**/*"
     ],
+    "extraResources": [
+      { "from": ".env", "to": ".env" }
+    ],
     "win": {
       "target": "nsis",
       "icon": "build/icon.ico"
