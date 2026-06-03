@@ -21,3 +21,9 @@ export async function login(username, password) {
 - Always guard with `?.` in case preload is unavailable
 - Return shape must match what the main process sends (`{ success, error? }`)
 - No UI logic here — pure data calls only
+
+## Current IPC channels
+
+| Channel | Handler | Description |
+|---|---|---|
+| `auth:login` | `src/main/index.js` | Validate username + bcrypt password against DB |

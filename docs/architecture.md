@@ -21,11 +21,12 @@ src/
 
 ## Auth Flow
 
-1. `Login.jsx` → `window.electronAPI.login(user, pass)`
+1. `Login.jsx` → `window.electronAPI?.login(user, pass)`
 2. Preload forwards via IPC channel `auth:login`
-3. Main queries PostgreSQL `wmsm.users`
-4. Returns `{ success: true/false }`
-5. `App.jsx` swaps `<Login>` → `<Dashboard>`
+3. Main queries `users WHERE username = $1`, fetches hash
+4. `bcrypt.compare(input, hash)` for bcrypt accounts; plain-text compare for legacy
+5. Returns `{ success: true/false }`
+6. `App.jsx` swaps `<Login>` → `<Dashboard>`
 
 ## Key Decisions
 
@@ -36,3 +37,15 @@ See `decisions/` for Architecture Decision Records (ADRs).
 No CSS framework — two global files:
 - `src/renderer/src/styles/global.css` — gradient background
 - `src/renderer/src/styles/login.css` — frosted glass card
+
+## Packaging
+
+Three-platform builds via `electron-builder`:
+
+| Platform | Command | Output |
+|---|---|---|
+| Windows | `npm run build:win` | `dist/DeskatopApp Setup x.y.z.exe` |
+| macOS | `npm run build:mac` | `dist/DeskatopApp-x.y.z.dmg` |
+| Linux | `npm run build:linux` | `dist/*.AppImage`, `dist/*.deb` |
+
+`.env` is bundled via `extraResources` → installed to `resources/.env` automatically.
