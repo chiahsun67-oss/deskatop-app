@@ -1,8 +1,11 @@
-import 'dotenv/config'
+import dotenv from 'dotenv'
 import { app, BrowserWindow, shell, ipcMain } from 'electron'
 import { join } from 'path'
 import pg from 'pg'
 import bcrypt from 'bcryptjs'
+
+// packaged app: .env lives in resources/   dev: project root
+dotenv.config({ path: join(app.isPackaged ? process.resourcesPath : '.', '.env') })
 
 const { Pool } = pg
 
