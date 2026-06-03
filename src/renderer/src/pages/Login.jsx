@@ -22,7 +22,7 @@ export default function Login({ onSuccess }) {
     setLoading(true)
 
     try {
-      const result = await window.electronAPI.login(username, password)
+      const result = await window.electronAPI?.login(username, password)
       if (result.success) {
         onSuccess()
       } else {

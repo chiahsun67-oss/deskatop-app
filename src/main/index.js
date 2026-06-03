@@ -10,19 +10,28 @@ const pool = new Pool({
   port:     Number(process.env.DB_PORT) || 5432,
   database: process.env.DB_NAME     || 'wmsm',
   user:     process.env.DB_USER     || 'postgres',
-  password: process.env.DB_PASSWORD || ''
+  password: process.env.DB_PASSWORD   // must remain a truthy string; '' causes pg SASL to receive null
 })
 
+pool.on('error', (err) => console.error('[pool]', err))
+
 ipcMain.handle('auth:login', async (_event, username, password) => {
+  if (typeof username !== 'string' || username.length > 255 ||
+      typeof password !== 'string' || password.length > 255) {
+    return { success: false, error: '輸入格式錯誤' }
+  }
+  if (!process.env.DB_PASSWORD) {
+    return { success: false, error: '找不到資料庫設定，請確認 .env 檔案已放置在應用程式目錄中' }
+  }
   try {
     const { rows } = await pool.query(
-      'SELECT id FROM users WHERE username = $1 AND password = $2 LIMIT 1',
+      'SELECT id FROM wmsm.users WHERE username = $1 AND password = $2 LIMIT 1',
       [username, password]
     )
     return { success: rows.length > 0 }
   } catch (err) {
     console.error('[auth:login]', err.message)
-    return { success: false, error: '資料庫連線失敗：' + err.message }
+    return { success: false, error: '資料庫連線失敗，請檢查設定' }
   }
 })
 
