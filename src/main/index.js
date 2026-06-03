@@ -25,7 +25,7 @@ ipcMain.handle('auth:login', async (_event, username, password) => {
   }
   try {
     const { rows } = await pool.query(
-      'SELECT id FROM wmsm.users WHERE username = $1 AND password = $2 LIMIT 1',
+      'SELECT id FROM users WHERE username = $1 AND password = $2 LIMIT 1',
       [username, password]
     )
     return { success: rows.length > 0 }
