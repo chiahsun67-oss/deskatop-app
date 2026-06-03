@@ -2,6 +2,7 @@ import 'dotenv/config'
 import { app, BrowserWindow, shell, ipcMain } from 'electron'
 import { join } from 'path'
 import pg from 'pg'
+import bcrypt from 'bcryptjs'
 
 const { Pool } = pg
 
@@ -25,10 +26,17 @@ ipcMain.handle('auth:login', async (_event, username, password) => {
   }
   try {
     const { rows } = await pool.query(
-      'SELECT id FROM users WHERE username = $1 AND password = $2 LIMIT 1',
-      [username, password]
+      'SELECT id, password AS hash FROM users WHERE username = $1 LIMIT 1',
+      [username]
     )
-    return { success: rows.length > 0 }
+    if (rows.length === 0) return { success: false }
+
+    const stored = rows[0].hash
+    // support both bcrypt hashes and legacy plain-text passwords
+    const match = stored.startsWith('$2')
+      ? await bcrypt.compare(password, stored)
+      : password === stored
+    return { success: match }
   } catch (err) {
     console.error('[auth:login]', err.message)
     return { success: false, error: '資料庫連線失敗，請檢查設定' }
